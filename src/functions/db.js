@@ -1,13 +1,45 @@
-import { createClient } from "redis";
+import Redis from "ioredis";
 
-let REDIS_URI = process.env.REDIS_URI;
+export default function createRedisInstance() {
+  try {
+    let config = {
+      port: process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST,
+      password: process.env.REDIS_PASSWORD,
+      user : process.env.REDIS_USER,
+    };
 
-let redisClient = createClient(REDIS_URI);
+    const options = {
+      host: config.host,
+      lazyConnect: true,
+      showFriendlyErrorStack: true,
+      enableAutoPipelining: true,
+      maxRetriesPerRequest: 0,
+      retryStrategy: (times) => {
+        if (times > 3) {
+          throw new Error(`[Redis] Could not connect after ${times} attempts`);
+        }
 
-redisClient.on("connection", function () {
-    console.log("Redis client connected");
-});
+        return Math.min(times * 200, 1000);
+      },
+    };
 
-redisClient.connect();
+    if (config.port) {
+      options.port = config.port;
+    }
 
-export default redisClient;
+    if (config.password) {
+      options.password = config.password;
+    }
+
+    const redis = new Redis(options);
+
+    redis.on("error", (error) => {
+      console.warn("[Redis] Error connecting", error);
+    });
+
+    return redis;
+  } catch (e) {
+    throw new Error(`[Redis] Could not create a Redis instance`);
+  }
+}

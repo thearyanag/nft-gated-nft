@@ -14,13 +14,14 @@ import React from "react";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-function Home({props}) {
-  const { data: session , status } = useSession();
+function Home({ props }) {
+  const { data: session, status } = useSession();
 
+  const [userWallet, setUserWallet] = useState("");
   const [isCondition1Met, setIsCondition1Met] = useState(false);
   const [isCondition2Met, setIsCondition2Met] = useState(false);
   const [isCondition3Met, setIsCondition3Met] = useState(false);
-  const [image, setImage] = useState('./frame.png');
+  const [image, setImage] = useState("./frame.png");
 
   let nft_url = process.env.NEXT_PUBLIC_NFT_URL;
 
@@ -30,17 +31,28 @@ function Home({props}) {
       const data = await res.json();
       console.log("data", data);
       setImage(data.imageURL);
-    }
+    };
     fetchImage();
   }, []);
 
   useEffect(() => {
     if (session) {
-      const res = fetch("/api/createCustomer");
+      const res = fetch("/api/fetchWallet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ wallet: session.user.wallet }),
+      });
+      res.then((response) => {
+        response.json().then((data) => {
+          console.log("data", data);
+          setUserWallet(data.wallet);
+        });
+      });
       setIsCondition1Met(true);
     }
   }, [session]);
-
 
   const [isClaimable, setIsClaimable] = useState(false);
 
@@ -52,10 +64,10 @@ function Home({props}) {
 
   return (
     <Container>
-      <Stack direction="horizontal" gap={5}>  
+      <Stack direction="horizontal" gap={5}>
         <div>
           <a href={nft_url} target="_blank">
-          <Image src={image} alt="holaplex" rounded />
+            <Image src={image} alt="holaplex" rounded />
           </a>
         </div>
         <div className="">
@@ -63,6 +75,7 @@ function Home({props}) {
             <div>
               <h1>Holaplex Hub NFT</h1>
               <h3>Do some stuff and claim a free NFT</h3>
+              <h3>{userWallet}</h3>
             </div>
 
             <Condition

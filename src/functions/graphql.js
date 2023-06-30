@@ -31,7 +31,7 @@ mutation MintNft($input: MintDropInput!) {
 }
 `;
 
-export default async function createCustomer() {
+export async function createCustomer() {
   let variables = {
     input: {
       project: `${process.env.HOLAPLEX_PROJECT_ID}`,
@@ -56,7 +56,7 @@ export default async function createCustomer() {
 
   console.log(response.data.data.createCustomer.customer);
 
-  res.status(200).json(response.data.data.createCustomer.customer.id);
+  return response.data.data.createCustomer.customer.id;
 }
 
 export async function createCustomerWallet(customerId) {
