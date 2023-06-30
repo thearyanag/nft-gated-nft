@@ -7,6 +7,11 @@ import Image from 'next/image';
 
 export const UserConnected = () => {
   const { data: session } = useSession();
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <div>
         <Dropdown>
