@@ -5,14 +5,13 @@ import {cloneDeep} from "tailwindcss/lib/util/cloneDeep";
 export default NextAuth({
   providers: [
     TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET,
-    }),
+      clientId: process.env.TWITTER_ACCESS_TOKEN,
+      clientSecret: process.env.TWITTER_ACCESS_SECRET
+        }),
   ],
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {
       if (profile) {
-        console.log("profile", profile);
         token["userProfile"] = {
           followersCount: profile.followers_count,
           twitterHandle: profile.screen_name,
@@ -20,6 +19,7 @@ export default NextAuth({
         };
       }
       if (account) {
+        console.log("account", account);
         token["credentials"] = {
           authToken: account.oauth_token,
           authSecret: account.oauth_token_secret,

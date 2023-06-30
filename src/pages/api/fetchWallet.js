@@ -5,9 +5,11 @@ import {
 } from "@/functions/graphql";
 import { getToken } from "next-auth/jwt";
 import db from "@/functions/db";
+import axios from "axios";
 
 export default async (req, res) => {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
 
   let client = db();
 

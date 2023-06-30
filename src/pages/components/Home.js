@@ -54,6 +54,15 @@ function Home({ props }) {
     }
   }, [session]);
 
+  const onLike = async () => {
+    let res = await fetch("/api/twitter/getLikedResult", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
   const [isClaimable, setIsClaimable] = useState(false);
 
   useEffect(() => {
