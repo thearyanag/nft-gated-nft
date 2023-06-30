@@ -8,6 +8,6 @@ redisClient.on("connection", function () {
     console.log("Redis client connected");
 });
 
-await redisClient.connect();
+redisClient.connect();
 
 export default redisClient;
