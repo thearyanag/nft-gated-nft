@@ -12,11 +12,35 @@ import { useState } from "react";
 import Condition from "./Conditions.js";
 import React from "react";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
-function Home() {
+function Home({props}) {
+  const { data: session , status } = useSession();
+
   const [isCondition1Met, setIsCondition1Met] = useState(false);
-  const [isCondition2Met, setIsCondition2Met] = useState(true);
-  const [isCondition3Met, setIsCondition3Met] = useState(true);
+  const [isCondition2Met, setIsCondition2Met] = useState(false);
+  const [isCondition3Met, setIsCondition3Met] = useState(false);
+  const [image, setImage] = useState('./frame.png');
+
+  let nft_url = process.env.NEXT_PUBLIC_NFT_URL;
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const res = await fetch("/api/fetchnftimage");
+      const data = await res.json();
+      console.log("data", data);
+      setImage(data.imageURL);
+    }
+    fetchImage();
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      const res = fetch("/api/createCustomer");
+      setIsCondition1Met(true);
+    }
+  }, [session]);
+
 
   const [isClaimable, setIsClaimable] = useState(false);
 
@@ -28,9 +52,11 @@ function Home() {
 
   return (
     <Container>
-      <Stack direction="horizontal" gap={5}>
+      <Stack direction="horizontal" gap={5}>  
         <div>
-          <Image src="./frame.png" rounded />
+          <a href={nft_url} target="_blank">
+          <Image src={image} alt="holaplex" rounded />
+          </a>
         </div>
         <div className="">
           <Stack gap={3}>
@@ -56,7 +82,7 @@ function Home() {
                 <Row>
                   <Col sm={8}>Criteria Met:</Col>
                   <Col sm={4}>
-                    <Button disabled={true} variant="warning" size="m">
+                    <Button disabled={!isClaimable} variant="warning" size="m">
                       Claim Now
                     </Button>
                   </Col>

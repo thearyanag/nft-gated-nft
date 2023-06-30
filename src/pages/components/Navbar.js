@@ -6,9 +6,10 @@ import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
 import UserConnected from "./UserConnected";
 import Image from "react-bootstrap/Image";
+import { signIn, useSession } from 'next-auth/react';
 
 function NavBar() {
-  const [isConnected, userIsConnected] = useState(false);
+  const { data: session , status } = useSession();
 
   return (
     <>
@@ -23,10 +24,10 @@ function NavBar() {
           </Navbar.Brand>
           <Nav className="me-auto"></Nav>
           <div className="mb-2">
-            {isConnected ? (
+            {status === "authenticated" ? (
               <UserConnected />
             ) : (
-              <Button variant="warning" size="m">
+              <Button variant="warning" onClick={() => signIn()} size="m">
                 Connect Twitter
               </Button>
             )}

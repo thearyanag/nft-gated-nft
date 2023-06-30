@@ -1,15 +1,22 @@
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+
 
 
 export const UserConnected = () => {
+  const { data: session } = useSession();
   return (
     <div>
         <Dropdown>
-        <Dropdown.Toggle variant="outline-warning">@damiandotsol</Dropdown.Toggle>{' '}
+        <Dropdown.Toggle variant="outline-warning">
+          {session.user.image && <Image src={session.user.image} alt={session.user.name} width="30" height="30" className="rounded-circle" />}
+          {" "}
+          {session.twitter.twitterHandle}</Dropdown.Toggle>{' '}
          <Dropdown.Menu>
         <Dropdown.Item href="#/action-1">View Wallet</Dropdown.Item>
-        <Dropdown.Item href="#/action-2">Logout</Dropdown.Item>
+        <Dropdown.Item onClick={() => signOut()}>Logout</Dropdown.Item>
       </Dropdown.Menu>
       </Dropdown>
     </div>
