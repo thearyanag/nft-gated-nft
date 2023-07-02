@@ -5,6 +5,7 @@ import Stack from "react-bootstrap/Stack";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { HiRefresh } from "react-icons/hi"
 
 import { useState } from "react";
 
@@ -55,12 +56,32 @@ function Home({ props }) {
   }, [session]);
 
   const onLike = async () => {
-    let res = await fetch("/api/twitter/getLikedResult", {
+    let res_1 = await fetch("/api/twitter/getTL", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    // let res_2 = await fetch("/api/twitter/getLikedResult", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
+
+    console.log(typeof res_1.body)
+    console.log(res_1)
+
+    let tweetResult = JSON.parse(res_1.body);
+    // let likedResult = JSON.parse(res_2.body);
+
+    let tweetStatus = tweetResult.status;
+    // let likedStatus = likedResult.status;
+
+    // setIsCondition2Met(likedStatus)
+    setIsCondition3Met(tweetStatus)
+
   };
 
   const [isClaimable, setIsClaimable] = useState(false);
@@ -102,9 +123,25 @@ function Home({ props }) {
             <Card className="bg-dark text-light">
               <Card.Body>
                 <Row>
-                  <Col sm={8}>Criteria Met:</Col>
+                  <Col sm={6}>Criteria Met:</Col>
+                  <Col sm={2}>
+                    {" "}
+                    <Button
+                      disabled={isClaimable}
+                      onClick={onLike}
+                      variant="warning"
+                      size="s"
+                    >
+                      <HiRefresh />
+                    </Button>
+                  </Col>
                   <Col sm={4}>
-                    <Button disabled={!isClaimable} variant="warning" size="m">
+                    <Button
+                      disabled={!isClaimable}
+                      // onClick={}
+                      variant="warning"
+                      size="m"
+                    >
                       Claim Now
                     </Button>
                   </Col>
