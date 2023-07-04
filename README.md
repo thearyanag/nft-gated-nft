@@ -1,38 +1,79 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Holaplex Twitter Gated NFT Drop Starter
+
+A template repository to help you drop NFT based on user action performed on twitter.
+
+Includes:
+
+- [NextJS](https://nextjs.org/) 13 web framework (app directory enabled)
+- Redis
+- User management with twitter based login through [next-auth](https://next-auth.js.org/)
+- Holaplex Hub SDK
 
 ## Getting Started
 
-First, run the development server:
+Ensure you have nodejs-18 and yarn installed
 
-```bash
-npm run dev
-# or
+```
+# clone the repo to your local system
+git clone git@github.com:thearyanag/twitter-gated-nft.git
+
+# install dependencies
+yarn install
+
+# setup database
+setup a database at https://docs.railway.app/ for free
+
+# boot up the app
 yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+See your app at [http://localhost:3001](http://localhost:3001)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Environment
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Create a `.env.local` file at the root of the project. Add the following environment variable.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```
+TWITTER_ACCESS_TOKEN=
+TWITTER_ACCESS_SECRET=
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+NEXTAUTH_URL=
+# from railways redis
+REDIS_PORT=
+REDIS_HOST=
+REDIS_PASSWORD=
+REDIS_USER=
 
-## Learn More
+TWITTER_CLIENT_ID=
+TWITTER_CLIENT_SECRET=
 
-To learn more about Next.js, take a look at the following resources:
+# openssl 64 bit generated key for security
+NEXTAUTH_SECRET=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# from holaplex console
+HOLAPLEX_ACCESS_TOKEN=
+# project id of which drop is part of
+HOLAPLEX_PROJECT_ID=
+# drop id which will be dropped to the user
+HOLAPLEX_DROP_ID=
+HOLAPLEX_API_URL=https://api.holaplex.com/graphql
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# tweet 1 would always be a like and can be any tweet link
+NEXT_PUBLIC_TWEET1_URL=https://twitter.com/SuperteamEarn/status/1674666819720974338?s=20
+NEXT_PUBLIC_TWEET1_ACTION=LIKE
 
-## Deploy on Vercel
+# tweet 2 can be RETWEET or QUOTE or REPLY or HASHTAG and can be any tweet link
+NEXT_PUBLIC_TWEET2_URL=https://twitter.com/smf_bridges/status/1674669245488144387?s=20
+NEXT_PUBLIC_TWEET2_ACTION=RETWEET
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- incase of hashtag, it should be just a hashtag without the #, example : solana , not #solana
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+
+## Release
+The starter is designed to be deployed to [vercel](https://vercel.com/) 
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fthearyanag%2Ftwitter-gated-nft&env=TWITTER_ACCESS_TOKEN,TWITTER_ACCESS_SECRET,TWITTER_CLIENT_ID,TWITTER_CLIENT_SECRET,REDIS_HOST,REDIS_PORT,REDIS_PASSWORD,REDIS_USER,NEXTAUTH_SECRET,HOLAPLEX_ACCESS_TOKEN&project-name=holaplex-twitter)
+
+### Environment Variables
+You'll have to add the envrionment variables yourself.
