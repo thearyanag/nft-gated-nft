@@ -17,7 +17,7 @@ function Condition(prop) {
       <hr />
       <Row>
         <Col sm={10}>
-          {prop.text} {prop.tweet && <a href={prop.tweet}>Link</a>}
+          {prop.text} {prop.tweet && <a href={prop.tweet} target="_blank">Link</a>}
         </Col>
 
         <Col sm={2}>{isConditionMet ? <SlCheck /> : <RxCrossCircled />}</Col>
