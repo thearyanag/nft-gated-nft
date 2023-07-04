@@ -4,6 +4,10 @@ import Twitter from "twitter-lite";
 export default async (req, res) => {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   const client = new Twitter({
     consumer_key: process.env.TWITTER_ACCESS_TOKEN,
     consumer_secret: process.env.TWITTER_ACCESS_SECRET,
@@ -42,7 +46,7 @@ export default async (req, res) => {
   if (tweet_action == "RETWEET") tweet_action = "retweeted";
   else if (tweet_action == "QUOTE") tweet_action = "quoted";
   else if (tweet_action == "REPLY") tweet_action = "replied_to";
-  
+
   let userId = token.sub;
   const result = await client.get(
     `users/${userId}/tweets?tweet.fields=referenced_tweets&expansions=referenced_tweets.id`

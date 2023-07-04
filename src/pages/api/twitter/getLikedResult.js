@@ -3,12 +3,10 @@ import Twitter from "twitter-lite";
 
 export default async (req, res) => {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  console.log("token", token);
 
-  // console.log("process.env.TWITTER_ACCESS_TOKEN", process.env.TWITTER_ACCESS_TOKEN);
-  // console.log("process.env.TWITTER_ACCESS_SECRET", process.env.TWITTER_ACCESS_SECRET);
-  // console.log("token.credentials.authToken", token.credentials.authToken);
-  // console.log("token.credentials.authSecret", token.credentials.authSecret);
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
   const client = new Twitter({
     consumer_key: process.env.TWITTER_ACCESS_TOKEN,
@@ -31,7 +29,7 @@ export default async (req, res) => {
   } else if (tweet2_action == "LIKE") {
     tweet_url = tweet2_url;
   }
-  
+
   if (tweet_url == undefined) {
     res.status(200).json({ message: "No tweet to like" });
     return;
@@ -43,16 +41,14 @@ export default async (req, res) => {
   }
 
   let userId = token.sub;
-  console.log("userId", userId);
-  const result = await client.get("users/"+userId+"/liked_tweets");
-  console.log("result", result);
+  const result = await client.get("users/" + userId + "/liked_tweets");
   let data = result.data;
 
-  for(let i=0; i<data.length; i++) {
-    if(data[i].id == tweetId) {
-      res.status(200).json({ status : true });
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == tweetId) {
+      res.status(200).json({ status: true });
       return;
     }
   }
-  res.status(200).json({ status : false });
+  res.status(200).json({ status: false });
 };

@@ -1,13 +1,13 @@
 import NextAuth from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
-import {cloneDeep} from "tailwindcss/lib/util/cloneDeep";
+import { cloneDeep } from "tailwindcss/lib/util/cloneDeep";
 
 export default NextAuth({
   providers: [
     TwitterProvider({
       clientId: process.env.TWITTER_ACCESS_TOKEN,
-      clientSecret: process.env.TWITTER_ACCESS_SECRET
-        }),
+      clientSecret: process.env.TWITTER_ACCESS_SECRET,
+    }),
   ],
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {

@@ -19,7 +19,6 @@ export default async (req, res) => {
     const user = await client.get(userId);
 
     console.log("user", user);
-
     if (!user) {
       let customerId = await createCustomer();
       let wallet = await createCustomerWallet(customerId);
