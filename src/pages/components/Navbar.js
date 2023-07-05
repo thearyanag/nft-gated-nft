@@ -27,7 +27,7 @@ function NavBar() {
             {status === "authenticated" ? (
               <UserConnected />
             ) : (
-              <Button variant="warning" onClick={() => signIn()} size="m">
+              <Button variant="warning" onClick={() => signIn()} size="m" style={{"borderRadius" : "50px" , "background" : "#F3F36D"}}>
                 Connect Twitter
               </Button>
             )}

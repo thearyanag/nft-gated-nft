@@ -127,14 +127,16 @@ function Home({ props }) {
       <Stack direction="horizontal" gap={5}>
         <div>
           <a href={nft_url} target="_blank">
-            <Image src={image} alt="holaplex" rounded width={"400rem"}/>
+            <Image src={image} alt="holaplex" rounded width={"400rem"} />
           </a>
         </div>
         <div className="">
           <Stack gap={3}>
             <div>
               <h1>Holaplex Hub NFT</h1>
-              <h3>Do some stuff and claim a free NFT</h3>
+              <h3 style={{ color: "#BDBDBD" }}>
+                Do some stuff and claim a free NFT
+              </h3>
             </div>
 
             <Condition
@@ -144,13 +146,13 @@ function Home({ props }) {
             />
             <Condition
               id="2"
-              text="Like this tweet"
+              text="Like"
               tweet={tweet1_url}
               state={isCondition2Met}
             />
             <Condition
               id="3"
-              text="Retweet this tweet"
+              text="Retweet"
               state={isCondition3Met}
               tweet={tweet2_url}
             />
@@ -168,7 +170,7 @@ function Home({ props }) {
                   <Col sm={2}>
                     {" "}
                     <Button
-                      disabled={isClaimable}
+                      disabled={!isClaimable && status === "unauthenticated"}
                       onClick={onLike}
                       variant="warning"
                       size="s"
