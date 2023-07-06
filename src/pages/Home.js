@@ -168,7 +168,7 @@ function Home({ props }) {
                 <Row>
                   {/* <Col sm={6}>Criteria Met:</Col> */}
                   {isClaimable ? (
-                    <Col sm={6}>Criteria Met!!(</Col>
+                    <Col sm={6}>Criteria Met!!</Col>
                   ) : (
                     <Col sm={6}>Criteria Not Met :(</Col>
                   )}
