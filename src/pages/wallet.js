@@ -10,16 +10,39 @@ import { Form } from "react-bootstrap";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 import axios from "axios";
-
+import Modal from "react-bootstrap/Modal";
 // import "./index.css";
 import Condition from "./components/Conditions.js";
 import React from "react";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { PublicKey } from "@solana/web3.js";
+import { useRouter } from "next/router";
+
+
+
+// function to check for valid web3 address
+function isValidAddress(address) {
+  try {
+    new PublicKey(address);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 function Home({ props }) {
   const { data: session, status } = useSession();
+  const [show, setShow] = useState(false);
+
+  const router = useRouter();
+
+  const handleClose = () => {
+    setShow(false), setIsValid(true);
+  };
+  const handleShow = () => setShow(true);
+
+  const [isValid, setIsValid] = useState(true);
 
   const [userWallet, setUserWallet] = useState("");
   const [hasInitiatedTransfer, setHasInitiatedTransfer] = useState(false);
@@ -57,125 +80,195 @@ function Home({ props }) {
     }
   }, [session]);
 
-  const onTransfer = () => {
-    let wallet = document.getElementById("wallet").value;
-    console.log("wallet", wallet);
-    let res = fetch("/api/transfer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ wallet: wallet }),
-    });
+  const onTransfer = (wallet) => {
+    // let wallet = document.getElementById("wallet").value;
+    // console.log("wallet", wallet);
+    // let res = fetch("/api/transfer", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ wallet: wallet }),
+    // });
 
-    res.then((response) => {
-      console.log("response", response);
-      response.json().then((data) => {
-        console.log("data", data);
-      });
-    });
+    // res.then((response) => {
+    //   console.log("response", response);
+    //   response.json().then((data) => {
+    //     console.log("data", data);
+    //   });
+    // });
   };
 
-  if (status == "unauthenticated") return <div>unauthenticated</div>;
+  if (status == "unauthenticated")  {
+    router.push("/");
+  }
 
   return (
-    <Container>
-      {status == "authenticated" ? (
-        <Stack direction="" gap={4} style={{ marginTop: "10em" }}>
+    <>
+      <Modal
+        {...props}
+        // size="md"
+        dialogClassName="modal-90w"
+        // aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={show}
+        onHide={handleClose}
+        className="modal"
+      >
+        <Container
+          style={{
+            padding: "4rem",
+            justifyContent: "center",
+            textAlign: "center",
+          }}
+        >
           <Row>
-            <Col sm={1}>
-              <Image
-                src={session.user.image}
-                alt={session.user.name}
-                width="80"
-                height="80"
-                className="rounded-circle"
+            <Col>
+              <h2>Send this NFT to a Solana Wallet</h2>
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col>
+              <h6 style={{ opacity: "0.5", textAlign: "left" }}>
+                Solana Wallet Address
+              </h6>
+              <Form.Control
+                style={{
+                  borderRadius: "50px",
+                  background: "#2B2B2B",
+                  color: "white",
+                }}
+                type="text"
+                placeholder="..."
+                id="wallet"
+                color="white"
               />
+              {!isValid && (
+                <p style={{ color: "red" }}>Invalid Solana Wallet Address</p>
+              )}
             </Col>
-            <Col sm={8}>
-              <h2>{session.user.name}</h2>
-              <h6 style={{ opacity: "0.5" }}>Wallet Address</h6>
-              <span style={{ display: "flex" }}>
-                {userWallet.substring(0, 7)}...
-                {userWallet.substring(userWallet.length - 8)}{" "}
-                <Button
-                  variant="link"
-                  onClick={() =>
-                    navigator.clipboard
-                      .writeText(userWallet)
-                      .then(() => alert("Copied to clipboard"))
-                  }
-                  size="sm"
-                >
-                  <AiOutlineCopy />
-                </Button>
-              </span>
-            </Col>
-            <Col sm={3}>
+          </Row>
+          <br />
+          <Row>
+            {/* cancel button */}
+            <Col>
               <Button
                 variant="outline-warning"
-                onClick={() => signOut()}
+                onClick={() => {
+                  handleClose();
+                }}
                 style={{ borderRadius: "50px" }}
               >
-                Logout
+                Cancel
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                variant="warning"
+                onClick={() => {
+                  let wallet = document.getElementById("wallet").value;
+                  if (!isValidAddress(wallet)) {
+                    setIsValid(false);
+                  }
+                  console.log("wallet", wallet);
+                }}
+                style={{ borderRadius: "50px" }}
+              >
+                Next
               </Button>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <h6 style={{ display: "flex", justifyContent: "center" }}>
-                Your Collectibles
-              </h6>
-            </Col>
-            <hr />
-          </Row>
-          <Row>
-          {purchase.map((item) => (
-            <Col>
-              <Card
-                style={{ width: "10rem" }}
-                bg="dark"
-                variant="dark"
-                text="white"
-                border="secondary"
-              >
-                <Card.Img
-                  variant="top"
-                  src={item.image}
-                  alt={item.name}
+        </Container>
+      </Modal>
+
+      <Container
+        style={{ justifyContent: "center", display: "flex", width: "75%" }}
+      >
+        {status == "authenticated" ? (
+          <Stack direction="" gap={4} style={{ marginTop: "10em" }}>
+            <Row>
+              <Col sm={1}>
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name}
+                  width="80"
+                  height="80"
+                  className="rounded-circle"
                 />
-                <Card.Body>
-                  <Card.Title>{item.name}</Card.Title>
-                  {/* <Button variant="primary">Transfer</Button> */}
-                  {hasInitiatedTransfer ? (
-                    <input
-                      onClick={onTransfer}
-                      id="wallet"
-                      type="text"
-                      style={{ width: "100%" }}
-                    ></input>
-                  ) : (
-                    <Button
-                      variant="outline-warning"
-                      style={{ borderRadius: "50px" }}
-                      onClick={() => setHasInitiatedTransfer(true)}
-                    >
-                      Transfer
-                    </Button>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-          </Row>
-        </Stack>
-      ) : (
-        <div>
-          <h1>Wallet</h1>
-          <h2>{userWallet}</h2>
-        </div>
-      )}
-    </Container>
+              </Col>
+              <Col sm={8}>
+                <h2>{session.user.name}</h2>
+                <h6 style={{ opacity: "0.5" }}>Wallet Address</h6>
+                <span style={{ display: "flex" }}>
+                  {userWallet.substring(0, 7)}...
+                  {userWallet.substring(userWallet.length - 8)}{" "}
+                  <Button
+                    variant="link"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(userWallet)
+                        .then(() => alert("Copied to clipboard"))
+                    }
+                    size="sm"
+                  >
+                    <AiOutlineCopy />
+                  </Button>
+                </span>
+              </Col>
+              <Col sm={3}>
+                <Button
+                  variant="outline-warning"
+                  onClick={() => signOut()}
+                  style={{ borderRadius: "50px" }}
+                >
+                  Logout
+                </Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h6 style={{ display: "flex", justifyContent: "center" }}>
+                  Your Collectibles
+                </h6>
+              </Col>
+              <hr />
+            </Row>
+            <Row>
+              {purchase.map((item) => (
+                <Col>
+                  <Card
+                    style={{ width: "10rem" }}
+                    bg="dark"
+                    variant="dark"
+                    text="white"
+                    border="secondary"
+                  >
+                    <Card.Img variant="top" src={item.image} alt={item.name} />
+                    <Card.Body>
+                      <Card.Title>{item.name}</Card.Title>
+                      {/* <Button variant="primary">Transfer</Button> */}
+                      <Button
+                        variant="outline-warning"
+                        style={{ borderRadius: "50px" }}
+                        onClick={() => handleShow()}
+                      >
+                        Transfer
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Stack>
+        ) : (
+          <div>
+            <h1>Wallet</h1>
+            <h2>{userWallet}</h2>
+          </div>
+        )}
+      </Container>
+    </>
   );
 }
 

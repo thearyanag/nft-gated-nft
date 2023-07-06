@@ -1,0 +1,9 @@
+.dropdown {
+    background-color: "#212122";
+    color: white;
+}
+
+.dropdown:hover {
+    background : rgba(33, 33, 34, 0.1);
+    color: white;
+}

@@ -7,9 +7,15 @@ import React, { useState } from "react";
 import UserConnected from "./UserConnected";
 import Image from "react-bootstrap/Image";
 import { signIn, useSession } from 'next-auth/react';
+import styles from "@/pages/components/navbar.module.css"
+
+const connectTwitter = () => {
+  signIn("twitter");
+};
 
 function NavBar() {
   const { data: session , status } = useSession();
+  
 
   return (
     <>
@@ -27,7 +33,7 @@ function NavBar() {
             {status === "authenticated" ? (
               <UserConnected />
             ) : (
-              <Button variant="warning" onClick={() => signIn()} size="m" style={{"borderRadius" : "50px" , "background" : "#F3F36D"}}>
+              <Button variant="warning" onClick={() => connectTwitter()} size="m" className={styles.connect}>
                 Connect Twitter
               </Button>
             )}
