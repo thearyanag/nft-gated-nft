@@ -18,8 +18,7 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
-
-
+import Spinner from "react-bootstrap/Spinner";
 
 // function to check for valid web3 address
 function isValidAddress(address) {
@@ -37,18 +36,22 @@ function Home({ props }) {
 
   const router = useRouter();
 
-  const handleClose = () => {
-    setShow(false), setIsValid(true);
-  };
-  const handleShow = () => setShow(true);
-
   const [isValid, setIsValid] = useState(true);
 
   const [userWallet, setUserWallet] = useState("");
   const [hasInitiatedTransfer, setHasInitiatedTransfer] = useState(false);
   const [hasTransfered, setHasTransfered] = useState(false);
 
+  const [mintId, setMintId] = useState(0);
+
   const [purchase, setPurchase] = useState([]);
+
+  const handleClose = () => {
+    setShow(false);
+  };
+  const handleShow = () => {
+    setShow(true);
+  };
 
   useEffect(() => {
     if (session) {
@@ -81,25 +84,26 @@ function Home({ props }) {
   }, [session]);
 
   const onTransfer = (wallet) => {
-    // let wallet = document.getElementById("wallet").value;
-    // console.log("wallet", wallet);
-    // let res = fetch("/api/transfer", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ wallet: wallet }),
-    // });
-
-    // res.then((response) => {
-    //   console.log("response", response);
-    //   response.json().then((data) => {
-    //     console.log("data", data);
-    //   });
-    // });
+    setHasInitiatedTransfer(true);
+    let res = fetch("/api/transfer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ wallet: wallet, mintId: mintId }),
+    });
+    res.then((response) => {
+      console.log("response", response);
+      response.json().then((data) => {
+        console.log("data", data);
+        if (data.status) {
+          setHasTransfered(true);
+        }
+      });
+    });
   };
 
-  if (status == "unauthenticated")  {
+  if (status == "unauthenticated") {
     router.push("/");
   }
 
@@ -130,54 +134,98 @@ function Home({ props }) {
           <br />
           <Row>
             <Col>
-              <h6 style={{ opacity: "0.5", textAlign: "left" }}>
-                Solana Wallet Address
-              </h6>
-              <Form.Control
-                style={{
-                  borderRadius: "50px",
-                  background: "#2B2B2B",
-                  color: "white",
-                }}
-                type="text"
-                placeholder="..."
-                id="wallet"
-                color="white"
-              />
-              {!isValid && (
-                <p style={{ color: "red" }}>Invalid Solana Wallet Address</p>
+              {hasTransfered && (
+                <Card
+                  body
+                  style={{
+                    borderRadius: "5px",
+                    background: "rgba(98, 142, 54, 0.25)",
+                    color: "white",
+                  }}
+                >
+                  NFT sent! It should be available in the destination wallet in
+                  just a few moments.{" "}
+                </Card>
+              )}
+              {!hasTransfered && (
+                <>
+                  <h6 style={{ opacity: "0.5", textAlign: "left" }}>
+                    Solana Wallet Address
+                  </h6>
+                  <Form.Control
+                    style={{
+                      borderRadius: "50px",
+                      background: "#2B2B2B",
+                      color: "white",
+                    }}
+                    type="text"
+                    placeholder="..."
+                    id="wallet"
+                    color="white"
+                  />
+                  {!isValid && (
+                    <p style={{ color: "red" }}>
+                      Invalid Solana Wallet Address
+                    </p>
+                  )}
+                </>
               )}
             </Col>
           </Row>
           <br />
           <Row>
             {/* cancel button */}
-            <Col>
-              <Button
-                variant="outline-warning"
-                onClick={() => {
-                  handleClose();
-                }}
-                style={{ borderRadius: "50px" }}
-              >
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                variant="warning"
-                onClick={() => {
-                  let wallet = document.getElementById("wallet").value;
-                  if (!isValidAddress(wallet)) {
-                    setIsValid(false);
-                  }
-                  console.log("wallet", wallet);
-                }}
-                style={{ borderRadius: "50px" }}
-              >
-                Next
-              </Button>
-            </Col>
+            {hasTransfered && (
+              <Col>
+                <Button
+                  variant="outline-warning"
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  style={{ borderRadius: "50px" }}
+                >
+                  Cancel
+                </Button>{" "}
+              </Col>
+            )}
+            {!hasTransfered && (
+              <>
+                <Col>
+                  <Button
+                    variant="outline-warning"
+                    onClick={() => {
+                      handleClose();
+                    }}
+                    style={{ borderRadius: "50px" }}
+                  >
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    variant="warning"
+                    disabled={hasInitiatedTransfer}
+                    onClick={() => {
+                      let wallet = document.getElementById("wallet").value;
+                      if (!isValidAddress(wallet)) {
+                        setIsValid(false);
+                        return;
+                      }
+                      onTransfer(wallet);
+                    }}
+                    style={{ borderRadius: "50px" }}
+                  >
+                    {hasInitiatedTransfer ? (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    ) : (
+                      "Next"
+                    )}
+                  </Button>
+                </Col>
+              </>
+            )}
           </Row>
         </Container>
       </Modal>
@@ -244,14 +292,21 @@ function Home({ props }) {
                     text="white"
                     border="secondary"
                   >
-                    <Card.Img variant="top" src={item.image} alt={item.name} />
+                    <Card.Img
+                      variant="top"
+                      src={item.image}
+                      id={item.mintId}
+                      alt={item.name}
+                    />
                     <Card.Body>
                       <Card.Title>{item.name}</Card.Title>
-                      {/* <Button variant="primary">Transfer</Button> */}
                       <Button
                         variant="outline-warning"
                         style={{ borderRadius: "50px" }}
-                        onClick={() => handleShow()}
+                        onClick={() => {
+                          setMintId(item.mintId);
+                          handleShow();
+                        }}
                       >
                         Transfer
                       </Button>

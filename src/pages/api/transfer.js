@@ -1,9 +1,12 @@
-import { mintNFT } from "@/functions/graphql";
+import { transferNFT } from "@/functions/graphql";
 
 export default async function handler(req, res) {
-    let { wallet } = req.body;
+    let { wallet , mintId} = req.body;
 
-    let response = await mintNFT(wallet);
+    console.log("wallet", wallet);
+    console.log("mintId", mintId);
+
+    let response = await transferNFT(wallet , mintId);
 
     return res.status(200).json({ "status" : response });
 }

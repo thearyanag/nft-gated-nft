@@ -46,11 +46,23 @@ let getProjectQuery = `query ($project: UUID!) {
       purchases {
         wallet
         txSignature
+        mintId
       }
     }
   }
 }
 `;
+
+let transferNFTMutation = `
+mutation Transfer($input: TransferAssetInput!) {
+  transferAsset(input: $input) {
+    mint {
+      owner
+      id
+      address
+    }
+  }
+}`;
 
 export async function createCustomer() {
   let variables = {
@@ -108,8 +120,7 @@ export async function createCustomerWallet(customerId) {
 }
 
 export async function mintNFT(customerWalletAddress) {
-
-  if(!customerWalletAddress) return false;
+  if (!customerWalletAddress) return false;
 
   let variables = {
     input: {
@@ -181,6 +192,36 @@ export async function getProject() {
   return "";
 }
 
+export async function transferNFT(wallet, mintId) {
+  let variables = {
+    input: {
+      id: mintId,
+      recipient: wallet,
+    },
+  };
+
+  let response = await axios.post(
+    process.env.HOLAPLEX_API_URL,
+    {
+      query: transferNFTMutation,
+      variables: variables,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.HOLAPLEX_ACCESS_TOKEN,
+      },
+    }
+  );
+
+  try {
+    if (response.data.data.transferAsset.mint.address) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+}
 export async function getPurchasedDrop(wallet) {
   let projectId = process.env.HOLAPLEX_PROJECT_ID;
 
@@ -215,8 +256,9 @@ export async function getPurchasedDrop(wallet) {
           purchase.push({
             image: drops[i].collection.metadataJson.image,
             txSignature: drops[i].purchases[j].txSignature,
-            name : drops[i].collection.metadataJson.name,
-            key : drops[i].id
+            mintId : drops[i].purchases[j].mintId,
+            name: drops[i].collection.metadataJson.name,
+            key: drops[i].id,
           });
           break;
         }

@@ -60,7 +60,7 @@ function Home({ props }) {
   }, [session]);
 
   const onTransfer = () => {
-    let res = fetch("/api/transfer", {
+    let res = fetch("/api/mint", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
