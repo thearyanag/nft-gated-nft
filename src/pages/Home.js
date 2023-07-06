@@ -6,6 +6,8 @@ import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { HiRefresh } from "react-icons/hi";
+import Spinner from "react-bootstrap/Spinner";
+
 
 import { useState } from "react";
 
@@ -19,10 +21,10 @@ function Home({ props }) {
   const { data: session, status } = useSession();
 
   const [userWallet, setUserWallet] = useState("");
+  const [hasInitiatedCheck, setHasInitiatedCheck] = useState(false);
   const [isCondition1Met, setIsCondition1Met] = useState(false);
   const [isCondition2Met, setIsCondition2Met] = useState(false);
   const [isCondition3Met, setIsCondition3Met] = useState(false);
-  const [hasMinted, setHasMinted] = useState(false);
   const [image, setImage] = useState("./frame.png");
 
   let nft_url = process.env.NEXT_PUBLIC_NFT_URL;
@@ -83,6 +85,7 @@ function Home({ props }) {
   };
 
   const onLike = async () => {
+    setHasInitiatedCheck(true);
     let res_1 = fetch("/api/twitter/getTL", {
       method: "POST",
       headers: {
@@ -102,6 +105,7 @@ function Home({ props }) {
         console.log("data", data);
         console.log("data", data.status);
         setIsCondition3Met(data.status);
+        setHasInitiatedCheck(false);
       });
     });
 
@@ -110,6 +114,7 @@ function Home({ props }) {
         console.log("data", data);
         console.log("data", data.status);
         setIsCondition2Met(data.status);
+        setHasInitiatedCheck(false);
       });
     });
   };
@@ -170,13 +175,16 @@ function Home({ props }) {
                   <Col sm={2}>
                     {" "}
                     <Button
-                      disabled={!isClaimable && status === "unauthenticated"}
+                      disabled={
+                        (!isClaimable && status === "unauthenticated") ||
+                        hasInitiatedCheck
+                      }
                       onClick={onLike}
                       variant="warning"
                       size="s"
                       style={{ borderRadius: "40px" }}
                     >
-                      <HiRefresh />
+                      {hasInitiatedCheck ? <Spinner animation="border" size="sm" /> : <HiRefresh />}
                     </Button>
                   </Col>
                   <Col sm={4}>
