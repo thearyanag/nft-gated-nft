@@ -108,6 +108,9 @@ export async function createCustomerWallet(customerId) {
 }
 
 export async function mintNFT(customerWalletAddress) {
+
+  if(!customerWalletAddress) return false;
+
   let variables = {
     input: {
       drop: `${process.env.HOLAPLEX_DROP_ID}`,
