@@ -10,6 +10,11 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <Component {...pageProps} />
+      <style jsx global>{`
+        'body': {
+          'background': 'black'
+        }
+      `}</style>
     </SessionProvider>
   )
 }
