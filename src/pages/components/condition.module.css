@@ -1,4 +1,16 @@
-.condition {
+.condition_text {
   text-decoration: line-through;
   color: "#AAAAAA";
+  justify-content: center;
+  align-items: center;
+}
+
+.condition_box {
+  align-items: center;
+  display: flex; 
+}
+
+.border {
+  border-color: #2B2B2B;
+  border-width: 3px;
 }

@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { HiRefresh } from "react-icons/hi";
 import Spinner from "react-bootstrap/Spinner";
-
+import styles from "@/styles/Home.module.css";
 
 import { useState } from "react";
 
@@ -128,7 +128,9 @@ function Home({ props }) {
   }, [isCondition1Met, isCondition2Met, isCondition3Met]);
 
   return (
-    <Container style={{ justifyContent: "center", display: "flex" }}>
+    <Container
+      style={{ justifyContent: "center", display: "flex", marginTop: "3rem" }}
+    >
       <Stack direction="horizontal" gap={5}>
         <div>
           <a href={nft_url} target="_blank">
@@ -136,7 +138,7 @@ function Home({ props }) {
           </a>
         </div>
         <div className="">
-          <Stack gap={3}>
+          <Stack gap={1}>
             <div>
               <h1>Holaplex Hub NFT</h1>
               <h3 style={{ color: "#BDBDBD" }}>
@@ -161,14 +163,14 @@ function Home({ props }) {
               state={isCondition3Met}
               tweet={tweet2_url}
             />
-
+            <hr />
             <Card className="bg-dark text-light round">
               {" "}
               <Card.Body>
-                <Row>
+                <Row className={styles.card}>
                   {/* <Col sm={6}>Criteria Met:</Col> */}
                   {isClaimable ? (
-                    <Col sm={6}>Criteria Met!!(</Col>
+                    <Col sm={6}>Criteria Met! </Col>
                   ) : (
                     <Col sm={6}>Criteria Not Met :(</Col>
                   )}
@@ -176,15 +178,19 @@ function Home({ props }) {
                     {" "}
                     <Button
                       disabled={
-                        (!isClaimable && status === "unauthenticated") ||
-                        hasInitiatedCheck
+                        hasInitiatedCheck ||
+                        (!isClaimable && status === "unauthenticated")
                       }
                       onClick={onLike}
                       variant="warning"
                       size="s"
-                      style={{ borderRadius: "40px" }}
+                      className={styles.spinner}
                     >
-                      {hasInitiatedCheck ? <Spinner animation="border" size="sm" /> : <HiRefresh />}
+                      {hasInitiatedCheck ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        <HiRefresh />
+                      )}
                     </Button>
                   </Col>
                   <Col sm={4}>
@@ -193,7 +199,7 @@ function Home({ props }) {
                       onClick={onTransfer}
                       variant="warning"
                       size="m"
-                      style={{ borderRadius: "20px" }}
+                      className={styles.button}
                     >
                       Claim Now
                     </Button>

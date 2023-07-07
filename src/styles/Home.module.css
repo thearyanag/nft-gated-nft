@@ -1,0 +1,15 @@
+.card {
+    /* display: flex; */
+    align-items: center;
+}
+
+.button {
+    background: #F3F36D;
+    border-radius: 50px;
+}
+
+.spinner {
+    background-color: #F3F36D;
+    background: #F3F36D;
+    border-radius: 100px;
+}

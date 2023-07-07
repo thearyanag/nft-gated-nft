@@ -15,12 +15,12 @@ function Condition(prop) {
   }, [prop.state]);
 
   return (
-    <div>
-      <hr />
+    <>
+      <hr className={styles.border} />
       <Row>
-        <Col sm={10}>
+        <Col sm={10} className={styles.condition_box}>
           {isConditionMet ? (
-            <div className={styles.condition}>
+            <div className={styles.condition_text}>
               {prop.text}{" "}
               {prop.tweet && (
                 <a
@@ -56,7 +56,7 @@ function Condition(prop) {
           )}
         </Col>
       </Row>
-    </div>
+    </>
   );
 }
 

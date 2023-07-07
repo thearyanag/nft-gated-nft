@@ -19,8 +19,8 @@ function NavBar() {
 
   return (
     <>
-      <Navbar bg="dark" variant="dark">
-        <Container>
+      <Navbar bg="#1A1A1D" variant="dark">
+        <Container style={{"marginTop" : "auto", "marginBottom" : "auto"}}>
           <Navbar.Brand href="#home">
             <Image
               src="./hola-logo.svg"
@@ -28,8 +28,7 @@ function NavBar() {
               alt=" "
             />
           </Navbar.Brand>
-          <Nav className="me-auto"></Nav>
-          <div className="mb-2">
+          <Nav>
             {status === "authenticated" ? (
               <UserConnected />
             ) : (
@@ -37,7 +36,7 @@ function NavBar() {
                 Connect Twitter
               </Button>
             )}
-          </div>
+          </Nav>
         </Container>
       </Navbar>
 
