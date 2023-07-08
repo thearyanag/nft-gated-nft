@@ -9,16 +9,14 @@ import { AiOutlineCopy } from "react-icons/ai";
 import { Form } from "react-bootstrap";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import axios from "axios";
 import Modal from "react-bootstrap/Modal";
-// import "./index.css";
-import Condition from "./components/Conditions.js";
 import React from "react";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { PublicKey } from "@solana/web3.js";
 import { useRouter } from "next/router";
 import Spinner from "react-bootstrap/Spinner";
+import styles from "@/styles/Wallet.module.css";
 
 // function to check for valid web3 address
 function isValidAddress(address) {
@@ -111,21 +109,13 @@ function Home({ props }) {
     <>
       <Modal
         {...props}
-        // size="md"
         dialogClassName="modal-90w"
-        // aria-labelledby="contained-modal-title-vcenter"
         centered
         show={show}
         onHide={handleClose}
         className="modal"
       >
-        <Container
-          style={{
-            padding: "4rem",
-            justifyContent: "center",
-            textAlign: "center",
-          }}
-        >
+        <Container className={styles.modal}>
           <Row>
             <Col>
               <h2>Send this NFT to a Solana Wallet</h2>
@@ -135,23 +125,14 @@ function Home({ props }) {
           <Row>
             <Col>
               {hasTransfered && (
-                <Card
-                  body
-                  style={{
-                    borderRadius: "5px",
-                    background: "rgba(98, 142, 54, 0.25)",
-                    color: "white",
-                  }}
-                >
+                <Card body className={styles.modal_success}>
                   NFT sent! It should be available in the destination wallet in
                   just a few moments.{" "}
                 </Card>
               )}
               {!hasTransfered && (
                 <>
-                  <h6 style={{ opacity: "0.5", textAlign: "left" }}>
-                    Solana Wallet Address
-                  </h6>
+                  <h6 className={styles.modal_text}>Solana Wallet Address</h6>
                   <Form.Control
                     style={{
                       borderRadius: "50px",
@@ -164,9 +145,9 @@ function Home({ props }) {
                     color="white"
                   />
                   {!isValid && (
-                    <p style={{ color: "red" }}>
-                      Invalid Solana Wallet Address
-                    </p>
+                    <Card body className={styles.modal_fail}>
+                      This doesn’t look like a valid Solana wallet address.
+                    </Card>
                   )}
                 </>
               )}
@@ -196,7 +177,7 @@ function Home({ props }) {
                     onClick={() => {
                       handleClose();
                     }}
-                    style={{ borderRadius: "50px" }}
+                    className={styles.cancel}
                   >
                     Cancel
                   </Button>
@@ -213,7 +194,7 @@ function Home({ props }) {
                       }
                       onTransfer(wallet);
                     }}
-                    style={{ borderRadius: "50px" }}
+                    className={styles.next}
                   >
                     {hasInitiatedTransfer ? (
                       <Spinner animation="border" role="status" size="sm">
@@ -245,7 +226,7 @@ function Home({ props }) {
                   className="rounded-circle"
                 />
               </Col>
-              <Col sm={8}>
+              <Col sm={9}>
                 <h2>{session.user.name}</h2>
                 <h6 style={{ opacity: "0.5" }}>Wallet Address</h6>
                 <span style={{ display: "flex" }}>
@@ -264,11 +245,11 @@ function Home({ props }) {
                   </Button>
                 </span>
               </Col>
-              <Col sm={3}>
+              <Col sm={2}>
                 <Button
                   variant="outline-warning"
                   onClick={() => signOut()}
-                  style={{ borderRadius: "50px" }}
+                  className={styles.logout}
                 >
                   Logout
                 </Button>
@@ -276,9 +257,7 @@ function Home({ props }) {
             </Row>
             <Row>
               <Col>
-                <h6 style={{ display: "flex", justifyContent: "center" }}>
-                  Your Collectibles
-                </h6>
+                <h6 className={styles.your_collectibles}>Your Collectibles</h6>
               </Col>
               <hr />
             </Row>
@@ -302,7 +281,7 @@ function Home({ props }) {
                       <Card.Title>{item.name}</Card.Title>
                       <Button
                         variant="outline-warning"
-                        style={{ borderRadius: "50px" }}
+                        className={styles.transfer}
                         onClick={() => {
                           setMintId(item.mintId);
                           handleShow();

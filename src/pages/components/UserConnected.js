@@ -13,8 +13,8 @@ export const UserConnected = () => {
 
   return (
     <div>
-      <Dropdown>
-        <Dropdown.Toggle variant="outline-warning" style={{"borderRadius" : "50px"}}>
+      <Dropdown className={styles.dropdown}>
+        <Dropdown.Toggle variant="outline-warning" className={styles.profile}>
           {session.user.image && (
             <Image
               src={session.user.image}
@@ -22,13 +22,14 @@ export const UserConnected = () => {
               width="30"
               height="30"
               className="rounded-circle"
+              style={{ marginRight: "0.5rem" }}
             />
           )}{" @"}
           {session.twitter.twitterHandle}
         </Dropdown.Toggle>{" "}
         <Dropdown.Menu  style={{"background" : "#212122" }}>
-          <Dropdown.Item  className={styles.dropdown} href="/wallet">View Wallet</Dropdown.Item>
-          <Dropdown.Item  className={styles.dropdown} dropdown-item onClick={() => signOut()}>Logout</Dropdown.Item>
+          <Dropdown.Item  className={styles.dropdown_menu} href="/wallet">View Wallet</Dropdown.Item>
+          <Dropdown.Item  className={styles.dropdown_menu} dropdown-item onClick={() => signOut()}>Logout</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </div>

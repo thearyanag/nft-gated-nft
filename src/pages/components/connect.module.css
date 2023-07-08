@@ -1,4 +1,8 @@
 .dropdown {
+    margin-top: 0.75rem;
+}
+
+.dropdown_menu {
     background-color: "#212122";
     color: white;
 }
@@ -6,4 +10,14 @@
 .dropdown:hover {
     background : rgba(33, 33, 34, 0.1);
     color: white;
+}
+
+.profile {
+    border-radius: 50px;
+    border-width: 3px;
+    border-color: #F3F36D;
+    color: #F3F36D;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
 }
