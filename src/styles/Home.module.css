@@ -8,8 +8,19 @@
     border-radius: 50px;
 }
 
+.button:disabled {
+    background: #F3F36D;
+    border-color: #F3F36D;
+}
+
 .spinner {
     background-color: #F3F36D;
     background: #F3F36D;
+    border-color: #F3F36D;
     border-radius: 50%;
+}
+
+.spinner:disabled {
+    background: #F3F36D;
+    border-color: #F3F36D;
 }
