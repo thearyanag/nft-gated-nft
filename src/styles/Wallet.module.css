@@ -23,10 +23,10 @@
 }
 
 .your_collectibles {
-    display: flex;
-    justify-content: center;
-    border-bottom: #f3f36d;
-    border-width: 3px;
+  display: flex;
+  justify-content: center;
+  border-bottom: #f3f36d;
+  border-width: 3px;
 }
 
 .next {
@@ -55,9 +55,9 @@
 }
 
 .logout {
-    border-color: #f3f36d;
-    border-radius: 50px;
-    border-width: 3px;
-    color: #f3f36d;
-    align-content:flex-end;
+  border-color: #f3f36d;
+  border-radius: 50px;
+  border-width: 3px;
+  color: #f3f36d;
+  align-content: flex-end;
 }

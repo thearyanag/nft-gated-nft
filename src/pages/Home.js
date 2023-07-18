@@ -8,6 +8,7 @@ import Col from "react-bootstrap/Col";
 import { HiRefresh } from "react-icons/hi";
 import Spinner from "react-bootstrap/Spinner";
 import styles from "@/styles/Home.module.css";
+import { useRouter } from "next/router";
 
 import { useState } from "react";
 
@@ -20,11 +21,14 @@ import { useSession } from "next-auth/react";
 function Home({ props }) {
   const { data: session, status } = useSession();
 
+  const router = useRouter();
+
   const [userWallet, setUserWallet] = useState("");
   const [hasInitiatedCheck, setHasInitiatedCheck] = useState(false);
   const [isCondition1Met, setIsCondition1Met] = useState(false);
   const [isCondition2Met, setIsCondition2Met] = useState(false);
   const [isCondition3Met, setIsCondition3Met] = useState(false);
+  const [hasMinted, setHasMinted] = useState(false);
   const [image, setImage] = useState("./frame.png");
 
   let nft_url = process.env.NEXT_PUBLIC_NFT_URL;
@@ -44,6 +48,7 @@ function Home({ props }) {
 
   useEffect(() => {
     if (session) {
+      if(userWallet) return; 
       const res = fetch("/api/fetchWallet", {
         method: "POST",
         headers: {
@@ -54,9 +59,11 @@ function Home({ props }) {
       res.then((response) => {
         response.json().then((data) => {
           console.log("data", data);
+          onLike();
           setUserWallet(data.wallet);
         });
       });
+      // onLike();
       setIsCondition1Met(true);
     }
   }, [session]);
@@ -75,7 +82,7 @@ function Home({ props }) {
       response.json().then((data) => {
         console.log("data", data);
         if (data.status) {
-          alert("Minted to your wallet");
+          // alert("Minted to your wallet");
           setHasMinted(true);
         } else {
           alert("You were late. Try again next time.");
@@ -86,37 +93,36 @@ function Home({ props }) {
 
   const onLike = async () => {
     setHasInitiatedCheck(true);
-    let res_1 = fetch("/api/twitter/getTL", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    let res_2 = fetch("/api/twitter/getLikedResult", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    res_1.then((response) => {
-      response.json().then((data) => {
-        console.log("data", data);
-        console.log("data", data.status);
-        setIsCondition3Met(data.status);
-        setHasInitiatedCheck(false);
+    // if(!userWallet) return;
+    if (!isCondition1Met) {
+      let res_1 = fetch("/api/twitter/getTL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-    });
-
-    res_2.then((response) => {
-      response.json().then((data) => {
-        console.log("data", data);
-        console.log("data", data.status);
-        setIsCondition2Met(data.status);
-        setHasInitiatedCheck(false);
+      res_1.then((response) => {
+        response.json().then((data) => {
+          setIsCondition3Met(data.status);
+          setHasInitiatedCheck(false);
+        });
       });
-    });
+    }
+
+    if (!isCondition2Met) {
+      let res_2 = fetch("/api/twitter/getLikedResult", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      res_2.then((response) => {
+        response.json().then((data) => {
+          setIsCondition2Met(data.status);
+          setHasInitiatedCheck(false);
+        });
+      });
+    }
   };
 
   const [isClaimable, setIsClaimable] = useState(false);
@@ -170,39 +176,31 @@ function Home({ props }) {
                 <Row className={styles.card}>
                   {/* <Col sm={6}>Criteria Met:</Col> */}
                   {isClaimable ? (
-                    <Col sm={6}>Criteria Met! </Col>
+                    <Col sm={hasMinted ? 7 : 8}>Criteria Met! </Col>
                   ) : (
-                    <Col sm={6}>Criteria Not Met :(</Col>
+                    <Col sm={hasMinted ? 7 : 8}>Criteria Not Met :(</Col>
                   )}
-                  <Col sm={2}>
-                    {" "}
-                    <Button
-                      disabled={
-                        hasInitiatedCheck ||
-                        (!isClaimable && status === "unauthenticated")
-                      }
-                      onClick={onLike}
-                      variant="warning"
-                      size="s"
-                      className={styles.spinner}
-                    >
-                      {hasInitiatedCheck ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        <HiRefresh />
-                      )}
-                    </Button>
-                  </Col>
-                  <Col sm={4}>
-                    <Button
-                      disabled={!isClaimable}
-                      onClick={onTransfer}
-                      variant="warning"
-                      size="m"
-                      className={styles.button}
-                    >
-                      Claim Now
-                    </Button>
+                  <Col sm={hasMinted ? 5 : 4}>
+                    {!hasMinted ? (
+                      <Button
+                        disabled={!isClaimable}
+                        onClick={onTransfer}
+                        variant="warning"
+                        size="m"
+                        className={styles.button}
+                      >
+                        Claim Now
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => router.push("/wallet")}
+                        variant="outline-warning"
+                        size="m"
+                        className={styles.wallet}
+                      >
+                        View in Wallet
+                      </Button>
+                    )}
                   </Col>
                 </Row>
               </Card.Body>

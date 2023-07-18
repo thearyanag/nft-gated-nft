@@ -24,3 +24,10 @@
     background: #F3F36D;
     border-color: #F3F36D;
 }
+
+.wallet {
+    border-color: #f3f36d;
+    border-radius: 50px;
+    border-width: 3px;
+    color: #f3f36d;  
+}
